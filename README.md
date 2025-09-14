@@ -93,7 +93,7 @@ npm install
   npm run dev
   ```
 
-Entrar a http://localhost:5173/ una vez se esté ejecutando ambas instancias
+Para ingresar al aplicativo http://localhost:5173/ una vez se esté ejecutando ambas instancias
 
 ---
 
@@ -125,13 +125,15 @@ Para ver los “correos enviados”:
 
 ```bash
 cd backend
-php artisan queue:listen
 tail -f storage/logs/laravel.log
 ```
 
 ---
 
 ## 📌 Endpoints principales
+
+**Nota:** En la carpeta del proyecto hay una colección Postman para importar y probar todos los endpoints.
+
 
 - `POST /api/login` → autenticación y token JWT  
 - `GET /api/solicitudes` → listar solicitudes (según rol)  
@@ -140,7 +142,6 @@ tail -f storage/logs/laravel.log
 - `GET /api/reporte` → resumen por estado (solo Admin)  
 - `POST /api/solicitudes/sugerencia` → genera sugerencia automática con IA (si falla la API, devuelve respuesta de reglas básicas)
 
-**Nota:** En la carpeta del proyecto hay una colección Postman para importar y probar todos los endpoints.
 
 ---
 
