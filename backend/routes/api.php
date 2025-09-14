@@ -24,4 +24,5 @@ Route::middleware(['jwt.verify', HandleCors::class, 'throttle:60,1'])->group(fun
 
     Route::get('/reportes/solicitudes', [ReporteController::class, 'index']);
 
+    Route::post('/solicitudes/sugerencia', [SolicitudController::class, 'sugerenciaIA'])->middleware('auth:api');
 });

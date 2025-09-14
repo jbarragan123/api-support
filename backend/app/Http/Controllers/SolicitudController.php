@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\SolicitudService;
 use App\Models\User;
 use App\Models\Solicitud;
+use App\Services\IAService;
 
 class SolicitudController extends Controller
 {
@@ -131,5 +132,19 @@ class SolicitudController extends Controller
             'message' => 'Solicitud actualizada correctamente',
             'data' => $solicitud->load('user')
         ], 200);
+    }
+
+    public function sugerenciaIA(Request $request, IAService $iaService)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+        ]);
+
+        $respuesta = $iaService->sugerirRespuesta($request->titulo, $request->descripcion);
+
+        return response()->json([
+            'sugerencia' => $respuesta,
+        ]);
     }
 }
