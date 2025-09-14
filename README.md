@@ -18,6 +18,8 @@ Incluye autenticación JWT, roles, notificaciones por logs, dashboard de adminis
 
 Clonar el repositorio:
 
+(Recomiendo usar wampp64 para facilidad en versiones php descomprimir en wamp64/www) 
+
 ```bash
 git clone https://github.com/jbarragan123/app-support.git
 cd app-support
