@@ -1,31 +1,36 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Middleware;
 
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
-class AuthController extends Controller
+class RoleMiddleware
 {
-    public function login(Request $request)
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        $credentials = $request->only('email', 'password');
-
-        if (! $token = Auth::guard('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Credenciales inválidas'], 401);
-        }
-
         $user = Auth::guard('api')->user();
 
-        return response()->json([
-            'token' => $token,
-            'user' => $user->makeHidden(['password', 'remember_token'])
-        ]);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado'
+            ], 401);
+        }
+
+        if (!in_array($user->role->name, $roles)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Acceso denegado: no tienes permisos para esta acción'
+            ], 403);
+        }
+
+        return $next($request);
     }
 }
