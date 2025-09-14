@@ -25,13 +25,16 @@ class Solicitud extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Relación: usuario asignado (soporte)
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
     public function soporte()
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
-    // Relación: historial de cambios
     public function historialCambios()
     {
         return $this->hasMany(HistorialCambio::class);

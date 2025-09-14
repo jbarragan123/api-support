@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -33,15 +34,22 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $user = Auth::guard('api')->user();
+        $userId = Auth::guard('api')->id();
+        $user = User::with('role')->find($userId);
 
         return response()->json([
             'success' => true,
             'message' => 'Login exitoso',
             'data'    => [
                 'token' => $token,
-                'user'  => $user
+                'user'  => [
+                    'id'    => $user->id,
+                    'name'  => $user->name,
+                    'email' => $user->email,
+                    'role'  => $user->role ? $user->role->name : null, // 👈 aquí solo el nombre
+                ]
             ]
         ], 200);
     }
+
 }

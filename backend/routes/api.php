@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReporteController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Middleware\HandleCors;
@@ -22,4 +23,5 @@ Route::middleware(['jwt.verify', HandleCors::class, 'throttle:60,1'])->group(fun
         ->middleware('throttle:30,1'); // 30 requests/minuto
 
     Route::get('/reportes/solicitudes', [ReporteController::class, 'index']);
+
 });

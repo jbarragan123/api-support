@@ -40,19 +40,6 @@ class SolicitudController extends Controller
             $request->validate([
                 'title' => 'required|string|max:100|filled',
                 'description' => 'required|string|max:1000|filled',
-                'assigned_to' => [
-                    'nullable',
-                    'integer',
-                    'exists:users,id',
-                    function ($attribute, $value, $fail) {
-                        if ($value) {
-                            $assignedUser = User::find($value);
-                            if ($assignedUser && $assignedUser->role->name !== 'role_support') {
-                                $fail('El usuario asignado debe ser de soporte.');
-                            }
-                        }
-                    }
-                ],
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -62,8 +49,6 @@ class SolicitudController extends Controller
             ], 422);
         }
 
-        $user = Auth::guard('api')->user();
-
         if ($user->role->name !== 'role_client') {
             return response()->json([
                 'success' => false,
@@ -71,7 +56,14 @@ class SolicitudController extends Controller
             ], 403);
         }
 
-        $solicitud = $this->solicitudService->crear($user, $request->only(['title', 'description', 'assigned_to']));
+        try {
+            $solicitud = $this->solicitudService->crear($user, $request->only(['title', 'description']));
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
 
         return response()->json([
             'success' => true,
@@ -94,7 +86,7 @@ class SolicitudController extends Controller
 
         $user = Auth::guard('api')->user();
 
-        if (!in_array($user->role->name, ['role_admin','role_support'])) {
+        if (!in_array($user->role->name, ['role_admin', 'role_support'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Acceso denegado'
@@ -109,7 +101,7 @@ class SolicitudController extends Controller
                     'in:abierto,en progreso,cerrado',
                     function ($attribute, $value, $fail) use ($solicitud) {
                         if ($solicitud->status === 'cerrado' && $value !== 'cerrado') {
-                            $fail('No se puede reabrir una solicitud cerrada.');
+                            $fail('No se puede reabrir una solicitud cerrado.');
                         }
                     }
                 ],
@@ -137,7 +129,7 @@ class SolicitudController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Solicitud actualizada correctamente',
-            'data'    => $solicitud
+            'data' => $solicitud->load('user')
         ], 200);
     }
 }
