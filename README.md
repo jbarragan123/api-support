@@ -91,6 +91,8 @@ npm install
   npm run dev
   ```
 
+Entrar a http://localhost:5173/ una vez se esté ejecutando ambas instancias
+
 ---
 
 ## 👥 Usuarios de prueba (seeders)
